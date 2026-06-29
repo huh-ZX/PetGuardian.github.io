@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetGuardian</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0d0d1e;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+    }
+    .phone {
+      width: 100%; max-width: 375px; min-height: 100vh;
+      background: #0d0d1e; display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
+    }
+    .statusbar { display:flex; align-items:center; justify-content:space-between; padding:12px 24px 4px; }
+    .statusbar .time { font-size:12px; font-weight:700; letter-spacing:.05em; }
+    .statusbar .icons { display:flex; align-items:center; gap:6px; }
+    .wifi-icon { display:flex; align-items:flex-end; gap:2px; }
+    .wifi-bar { background:#fff; border-radius:2px; width:4px; }
+    .battery { display:flex; align-items:center; gap:2px; }
+    .battery-body { width:22px; height:11px; border:1.5px solid rgba(255,255,255,.8); border-radius:3px; padding:1.5px; }
+    .battery-fill { background:#fff; border-radius:2px; height:100%; width:80%; }
+    .battery-tip { width:2px; height:5px; background:rgba(255,255,255,.6); border-radius:0 2px 2px 0; }
+    .header { display:flex; align-items:center; justify-content:space-between; padding:8px 20px 12px; }
+    .btn-icon { background:none; border:none; cursor:pointer; color:rgba(255,255,255,.8); display:flex; align-items:center; justify-content:center; padding:4px; border-radius:8px; transition:color .2s; }
+    .btn-icon:hover { color:#fff; }
+    .header h1 { font-size:18px; font-weight:700; letter-spacing:-.02em; }
+    .avatar { width:36px; height:36px; border-radius:50%; background:rgba(251,146,60,.2); font-size:18px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+    .menu-dropdown { position:absolute; top:88px; left:0; right:0; z-index:40; background:#181830; border-bottom:1px solid rgba(255,255,255,.1); box-shadow:0 20px 40px rgba(0,0,0,.5); display:none; }
+    .menu-dropdown.open { display:block; }
+    .menu-item { width:100%; background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; padding:14px 24px; color:rgba(255,255,255,.8); font-size:14px; font-weight:500; transition:background .15s, color .15s; font-family:inherit; }
+    .menu-item:hover { background:rgba(255,255,255,.05); color:#fff; }
+    .tabs { display:flex; align-items:center; gap:8px; padding:0 20px 12px; }
+    .tab { display:flex; align-items:center; gap:6px; padding:6px 16px; border-radius:999px; font-size:14px; font-weight:500; cursor:pointer; border:none; transition:background .2s, color .2s; font-family:inherit; }
+    .tab.active { background:#fff; color:#0d0d1e; }
+    .tab.inactive { background:rgba(255,255,255,.1); color:rgba(255,255,255,.7); }
+    .tab.inactive:hover { background:rgba(255,255,255,.15); }
+    .content { flex:1; overflow-y:auto; padding:0 16px 32px; display:flex; flex-direction:column; gap:12px; scrollbar-width:none; }
+    .content::-webkit-scrollbar { display:none; }
+    .connection-row { display:flex; align-items:center; justify-content:space-between; }
+    .connection-left { display:flex; align-items:center; gap:8px; font-size:16px; font-weight:600; }
+    .live-badge { display:flex; align-items:center; gap:6px; background:rgba(34,197,94,.15); border:1px solid rgba(34,197,94,.3); border-radius:999px; padding:4px 12px; font-size:11px; font-weight:500; color:#86efac; }
+    .live-dot { width:6px; height:6px; border-radius:50%; background:#4ade80; animation:pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .card { border-radius:16px; padding:16px; }
+    .card-camera { background:#2a2a3e; border:1px solid rgba(255,255,255,.05); display:flex; align-items:center; gap:16px; cursor:pointer; transition:background .2s, transform .1s; }
+    .card-camera:hover { background:#32324a; }
+    .card-camera:active { transform:scale(.99); }
+    .camera-icon-wrap { width:48px; height:48px; border-radius:12px; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .camera-label { font-weight:600; font-size:15px; }
+    .card-camera .chevron { margin-left:auto; opacity:.3; flex-shrink:0; font-size:18px; }
+    .sensor-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .card-temp { background:#2a5bbf; }
+    .card-humidity { background:#3b5fa0; }
+    .sensor-header { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+    .sensor-label { font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:rgba(191,219,254,.9); }
+    .sensor-value { font-size:30px; font-weight:800; margin-bottom:2px; }
+    .sensor-sub { font-size:11px; color:rgba(191,219,254,.8); }
+    .humidity-bar-track { height:7px; background:rgba(255,255,255,.2); border-radius:999px; margin-bottom:6px; overflow:hidden; }
+    .humidity-bar-fill { height:100%; border-radius:999px; background:linear-gradient(to right,#93c5fd,#a78bfa); transition:width 1s ease; }
+    .humidity-value { font-size:22px; font-weight:800; margin-bottom:2px; }
+    .card-litter { background:#d4712a; }
+    .card-food { background:#c96c28; }
+    .card-device-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .card-device-title { display:flex; align-items:center; gap:8px; font-size:16px; font-weight:700; }
+    .btn-settings { background:none; border:none; cursor:pointer; color:rgba(255,255,255,.7); padding:2px; transition:color .2s; display:flex; }
+    .btn-settings:hover { color:#fff; }
+    .card-device-info { font-size:11px; color:rgba(255,237,213,.9); line-height:1.8; }
+    .auto-badge { display:inline-flex; align-items:center; gap:4px; font-size:11px; color:#86efac; margin-top:4px; }
+    .card-air { background:#3a5e8a; }
+    .card-air-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .card-air-title { display:flex; align-items:center; gap:8px; font-size:16px; font-weight:700; }
+    .air-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .air-row:last-child { margin-bottom:0; }
+    .air-row-label { font-size:13px; color:rgba(191,219,254,.9); }
+    .status-badge { display:inline-flex; align-items:center; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; border:1px solid; }
+    .badge-green { background:rgba(34,197,94,.2); color:#86efac; border-color:rgba(34,197,94,.3); }
+    .badge-orange { background:rgba(249,115,22,.2); color:#fdba74; border-color:rgba(249,115,22,.3); }
+    .badge-red { background:rgba(239,68,68,.2); color:#fca5a5; border-color:rgba(239,68,68,.3); }
+    .badge-blue { background:rgba(96,165,250,.2); color:#bfdbfe; border-color:rgba(96,165,250,.3); }
+    .modal-backdrop { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); display:none; align-items:flex-end; justify-content:center; }
+    .modal-backdrop.open { display:flex; }
+    .modal-sheet { width:100%; max-width:375px; background:#1a1a2e; border-radius:24px 24px 0 0; padding:24px 24px 40px; border-top:1px solid rgba(255,255,255,.1); animation:slideUp .25s ease; }
+    @keyframes slideUp { from{transform:translateY(100%);opacity:0} to{transform:translateY(0);opacity:1} }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+    .modal-title { font-size:17px; font-weight:700; }
+    .btn-close { background:none; border:none; cursor:pointer; color:rgba(255,255,255,.5); padding:2px; transition:color .2s; font-size:18px; line-height:1; }
+    .btn-close:hover { color:#fff; }
+    .modal-section { margin-bottom:16px; }
+    .modal-section-label { font-size:13px; font-weight:600; margin-bottom:8px; }
+    .pill-group { display:flex; gap:8px; flex-wrap:wrap; }
+    .pill { flex:1; min-width:60px; padding:9px 8px; border-radius:12px; font-size:12px; font-weight:600; cursor:pointer; background:rgba(255,255,255,.1); color:rgba(255,255,255,.6); border:none; transition:background .15s, color .15s; font-family:inherit; text-align:center; }
+    .pill:hover { background:rgba(255,255,255,.18); color:#fff; }
+    .pill.active-orange { background:#f97316; color:#fff; }
+    .pill.active-blue { background:#3b82f6; color:#fff; }
+    .btn-action { width:100%; padding:13px; border-radius:16px; font-size:14px; font-weight:700; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:filter .2s; font-family:inherit; margin-bottom:12px; }
+    .btn-action:hover { filter:brightness(1.1); }
+    .btn-orange { background:#f97316; color:#fff; }
+    .info-box { background:rgba(255,255,255,.05); border-radius:16px; padding:12px; }
+    .info-row { display:flex; justify-content:space-between; align-items:center; font-size:11px; margin-bottom:4px; }
+    .info-row:last-child { margin-bottom:0; }
+    .info-key { color:rgba(255,255,255,.5); }
+    .info-val { color:rgba(255,255,255,.8); }
+    .toggle-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .toggle-info .toggle-name { font-size:13px; font-weight:600; }
+    .toggle-info .toggle-desc { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
+    .toggle { width:44px; height:24px; border-radius:999px; background:rgba(255,255,255,.2); position:relative; cursor:pointer; border:none; transition:background .2s; flex-shrink:0; }
+    .toggle.on { background:#3b82f6; }
+    .toggle-thumb { position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.3); transition:transform .2s; }
+    .toggle.on .toggle-thumb { transform:translateX(20px); }
+    .alert-box { display:flex; gap:8px; align-items:flex-start; background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.2); border-radius:16px; padding:12px; }
+    .alert-text { font-size:11px; color:#bfdbfe; line-height:1.6; }
+    .modal-camera { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,.92); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; }
+    .modal-camera.open { display:flex; }
+    .camera-panel { width:100%; max-width:375px; }
+    .camera-topbar { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; }
+    .camera-topbar span { font-size:13px; color:rgba(255,255,255,.6); font-weight:500; }
+    .camera-viewport { margin:0 16px; border-radius:16px; overflow:hidden; background:#111; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; position:relative; }
+    .camera-connecting { display:flex; flex-direction:column; align-items:center; gap:10px; color:rgba(255,255,255,.4); font-size:13px; }
+    .spinner { width:28px; height:28px; border:2.5px solid rgba(255,255,255,.2); border-top-color:rgba(255,255,255,.7); border-radius:50%; animation:spin .8s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .camera-feed { position:absolute; inset:0; background:linear-gradient(135deg,#1a2a1a,#0a1a0a); display:flex; align-items:center; justify-content:center; }
+    .cat-icon { width:64px; height:64px; border-radius:50%; background:rgba(251,146,60,.2); display:flex; align-items:center; justify-content:center; font-size:36px; }
+    .live-indicator { position:absolute; top:10px; left:10px; background:rgba(0,0,0,.6); border-radius:999px; padding:3px 8px; display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; }
+    .live-dot-red { width:7px; height:7px; border-radius:50%; background:#ef4444; animation:pulse 1.2s infinite; }
+    .cam-id { position:absolute; bottom:8px; right:10px; font-size:10px; color:rgba(255,255,255,.3); }
+    .camera-actions { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:14px 16px 0; }
+    .camera-btn { background:rgba(255,255,255,.1); border:none; cursor:pointer; padding:10px 8px; border-radius:12px; font-size:11px; font-weight:500; color:rgba(255,255,255,.8); transition:background .15s; font-family:inherit; }
+    .camera-btn:hover { background:rgba(255,255,255,.18); color:#fff; }
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div class="statusbar">
+    <span class="time" id="clock">9:41</span>
+    <div class="icons">
+      <div class="wifi-icon">
+        <div class="wifi-bar" style="height:4px;opacity:.35"></div>
+        <div class="wifi-bar" style="height:6px;opacity:.35"></div>
+        <div class="wifi-bar" style="height:8px"></div>
+        <div class="wifi-bar" style="height:10px"></div>
+      </div>
+      <div class="wifi-icon">
+        <div class="wifi-bar" style="height:4px"></div>
+        <div class="wifi-bar" style="height:6px"></div>
+        <div class="wifi-bar" style="height:8px"></div>
+        <div class="wifi-bar" style="height:10px;opacity:.35"></div>
+      </div>
+      <div class="battery">
+        <div class="battery-body"><div class="battery-fill"></div></div>
+        <div class="battery-tip"></div>
+      </div>
+    </div>
+  </div>
+  <div class="header">
+    <button class="btn-icon" id="menuToggle">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6" x2="19" y2="6"/><line x1="3" y1="12" x2="19" y2="12"/><line x1="3" y1="18" x2="19" y2="18"/>
+      </svg>
+    </button>
+    <h1>PetGuardian</h1>
+    <div class="avatar">🐱</div>
+  </div>
+  <div class="menu-dropdown" id="menuDropdown">
+    <button class="menu-item" onclick="closeMenu()">Dashboard <span>›</span></button>
+    <button class="menu-item" onclick="closeMenu()">My Pets <span>›</span></button>
+    <button class="menu-item" onclick="closeMenu()">Notifications <span>›</span></button>
+    <button class="menu-item" onclick="closeMenu()">Settings <span>›</span></button>
+    <button class="menu-item" onclick="closeMenu()">Help <span>›</span></button>
+  </div>
+  <div class="tabs">
+    <button class="tab active" id="tabOyen" onclick="setTab('Oyen House')">Oyen House</button>
+    <button class="tab inactive" id="tabAdd" onclick="setTab('Add New Devices')">+ Add New Devices</button>
+  </div>
+  <div class="content">
+    <div class="connection-row">
+      <div class="connection-left">Connected</div>
+      <div class="live-badge"><span class="live-dot"></span>Last Updated <span id="lastUpdated">9:40 PM</span></div>
+    </div>
+    <div class="card card-camera" onclick="openCamera()">
+      <div class="camera-icon-wrap">
+        <svg width="22" height="22" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/>
+        </svg>
+      </div>
+      <span class="camera-label">Tap to View Real Time Camera</span>
+      <span class="chevron">›</span>
+    </div>
+    <div class="sensor-row">
+      <div class="card card-temp">
+        <div class="sensor-header">
+          <svg width="14" height="14" fill="none" stroke="rgba(191,219,254,.9)" stroke-width="2" stroke-linecap="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+          <span class="sensor-label">Temperature</span>
+        </div>
+        <div class="sensor-value" id="tempVal">24.0°C</div>
+        <div class="sensor-sub" id="tempLabel">Perfect for Oyen</div>
+      </div>
+      <div class="card card-humidity">
+        <div class="sensor-header">
+          <svg width="14" height="14" fill="none" stroke="rgba(191,219,254,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          <span class="sensor-label">Humidity</span>
+        </div>
+        <div class="humidity-bar-track"><div class="humidity-bar-fill" id="humidityBar" style="width:55%"></div></div>
+        <div class="humidity-value" id="humVal">55%</div>
+        <div class="sensor-sub" id="humLabel">Comfortable</div>
+      </div>
+    </div>
+    <div class="card card-litter">
+      <div class="card-device-header">
+        <div class="card-device-title">🪣 Litter Box</div>
+        <button class="btn-settings" onclick="openModal('litter')">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+      <div class="card-device-info" id="litterInfo"></div>
+      <div class="auto-badge" id="litterAutoBadge"></div>
+    </div>
+    <div class="card card-food">
+      <div class="card-device-header">
+        <div class="card-device-title">🍽️ Food Dispenser</div>
+        <button class="btn-settings" onclick="openModal('food')">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+      <div class="card-device-info" id="foodInfo"></div>
+    </div>
+    <div class="card card-air">
+      <div class="card-air-header">
+        <div class="card-air-title">
+          <svg width="18" height="18" fill="none" stroke="rgba(191,219,254,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+          Air Quality
+        </div>
+        <button class="btn-settings" onclick="openModal('air')">
+          <svg width="18" height="18" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+      <div class="air-row"><span class="air-row-label">Ventilation</span><span class="status-badge badge-green" id="airVent">Automatic</span></div>
+      <div class="air-row"><span class="air-row-label">CO₂ Level</span><span class="status-badge badge-green" id="airCO2">Normal</span></div>
+      <div class="air-row"><span class="air-row-label">CO Level</span><span class="status-badge badge-green" id="airCO">Normal</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- camera modal -->
+<div class="modal-camera" id="cameraModal" onclick="closeCamera(event)">
+  <div class="camera-panel" onclick="event.stopPropagation()">
+    <div class="camera-topbar"><span>Live Camera · Oyen House</span><button class="btn-close" onclick="closeCamera()">✕</button></div>
+    <div class="camera-viewport">
+      <div class="camera-connecting" id="cameraConnecting"><div class="spinner"></div>Connecting…</div>
+      <div class="camera-feed" id="cameraFeed" style="display:none">
+        <div class="cat-icon">🐱</div>
+        <div class="live-indicator"><span class="live-dot-red"></span>LIVE</div>
+        <span class="cam-id">CAM-01</span>
+      </div>
+    </div>
+    <div class="camera-actions">
+      <button class="camera-btn">Night Vision</button>
+      <button class="camera-btn">Motion Alert</button>
+      <button class="camera-btn">Record</button>
+    </div>
+  </div>
+</div>
+
+<!-- litter modal -->
+<div class="modal-backdrop" id="litterModal" onclick="closeModal(event,'litterModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-header"><span class="modal-title">Litter Box Settings</span><button class="btn-close" onclick="closeModalById('litterModal')">✕</button></div>
+    <div class="toggle-row">
+      <div class="toggle-info"><div class="toggle-name">Auto-Clean</div><div class="toggle-desc">Trigger after each use</div></div>
+      <button class="toggle on" id="autoCleanToggle" onclick="toggleAutoClean()"><div class="toggle-thumb"></div></button>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Clean Interval</div>
+      <div class="pill-group" id="intervalPills">
+        <button class="pill" onclick="setCleanInterval(4)">4h</button>
+        <button class="pill active-orange" onclick="setCleanInterval(8)">8h</button>
+        <button class="pill" onclick="setCleanInterval(12)">12h</button>
+        <button class="pill" onclick="setCleanInterval(24)">24h</button>
+      </div>
+    </div>
+    <button class="btn-action btn-orange" onclick="markCleaned()">✓ Mark as Cleaned Now</button>
+    <div class="info-box" id="litterInfoBox"></div>
+  </div>
+</div>
+
+<!-- food modal -->
+<div class="modal-backdrop" id="foodModal" onclick="closeModal(event,'foodModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-header"><span class="modal-title">Food Dispenser Settings</span><button class="btn-close" onclick="closeModalById('foodModal')">✕</button></div>
+    <div class="modal-section">
+      <div class="modal-section-label">Dispense Schedule</div>
+      <div class="pill-group" id="schedulePills">
+        <button class="pill" onclick="setSchedule('Breakfast')">Breakfast</button>
+        <button class="pill" onclick="setSchedule('Lunch')">Lunch</button>
+        <button class="pill active-orange" onclick="setSchedule('Dinner')">Dinner</button>
+        <button class="pill" onclick="setSchedule('Custom')">Custom</button>
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Portion Size</div>
+      <div class="pill-group" id="portionPills">
+        <button class="pill" onclick="setPortion('Small')">Small</button>
+        <button class="pill active-orange" onclick="setPortion('Medium')">Medium</button>
+        <button class="pill" onclick="setPortion('Large')">Large</button>
+      </div>
+    </div>
+    <button class="btn-action btn-orange" onclick="dispenseNow()">↻ Dispense Now</button>
+    <div class="info-box" id="foodInfoBox"></div>
+  </div>
+</div>
+
+<!-- air modal -->
+<div class="modal-backdrop" id="airModal" onclick="closeModal(event,'airModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-header"><span class="modal-title">Air Quality Settings</span><button class="btn-close" onclick="closeModalById('airModal')">✕</button></div>
+    <div class="modal-section">
+      <div class="modal-section-label">Ventilation Mode</div>
+      <div class="pill-group" id="ventPills">
+        <button class="pill active-blue" onclick="setVent('Automatic')">Automatic</button>
+        <button class="pill" onclick="setVent('Manual')">Manual</button>
+        <button class="pill" onclick="setVent('Off')">Off</button>
+      </div>
+    </div>
+    <div class="info-box" style="margin-bottom:12px">
+      <div class="info-row"><span class="info-key">CO₂ Level</span><span class="status-badge badge-green">Normal</span></div>
+      <div class="info-row"><span class="info-key">CO Level</span><span class="status-badge badge-green">Normal</span></div>
+    </div>
+    <div class="alert-box">
+      <span style="color:#93c5fd;flex-shrink:0">ℹ</span>
+      <span class="alert-text">Air quality sensors update every 5 minutes. Ensure room ventilation is adequate for your pet.</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const state = {
+    temp: 24.0, humidity: 55,
+    autoClean: true, cleanInterval: 8,
+    lastCleaned: new Date(Date.now() - 5*60*1000),
+    lastUsed: new Date(Date.now() - 2*60*1000),
+    foodSchedule: 'Dinner', portionSize: 'Medium',
+    lastDispensed: new Date(Date.now() - 3*60*60*1000),
+    ventilation: 'Automatic',
+  };
+  const fmtTime = d => d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+  const fmtDT = d => d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) + ' | ' + d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});
+  function tick() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:false});
+    document.getElementById('lastUpdated').textContent = fmtTime(now);
+    state.temp = Math.max(20,Math.min(30, state.temp + (Math.random()-.5)*.2));
+    state.humidity = Math.max(40,Math.min(75, state.humidity + (Math.random()-.5)*.3));
+    document.getElementById('tempVal').textContent = state.temp.toFixed(1)+'°C';
+    document.getElementById('tempLabel').textContent = state.temp<18?'Too Cold':state.temp<22?'Cool':state.temp<27?'Perfect for Oyen':'Warm';
+    const h = Math.round(state.humidity);
+    document.getElementById('humVal').textContent = h+'%';
+    document.getElementById('humidityBar').style.width = h+'%';
+    document.getElementById('humLabel').textContent = h<45?'Dry':h<60?'Comfortable':h<70?'Humid':'Very Humid';
+  }
+  function refreshCards() {
+    document.getElementById('litterInfo').innerHTML = `Last Litter: ${fmtDT(state.lastUsed)}<br>Cleared Since: ${fmtDT(state.lastCleaned)}`;
+    document.getElementById('litterAutoBadge').textContent = state.autoClean ? `✓ Auto-clean active · every ${state.cleanInterval}h` : '';
+    document.getElementById('litterInfoBox').innerHTML = `<div class="info-row"><span class="info-key">Last Cleaned</span><span class="info-val">${fmtDT(state.lastCleaned)}</span></div><div class="info-row"><span class="info-key">Last Used</span><span class="info-val">${fmtDT(state.lastUsed)}</span></div>`;
+    document.getElementById('foodInfo').innerHTML = `Last Dispensed: ${fmtDT(state.lastDispensed)}<br>Dispense Setting: ${state.foodSchedule} · ${state.portionSize}`;
+    document.getElementById('foodInfoBox').innerHTML = `<div class="info-row"><span class="info-key">Last Dispensed</span><span class="info-val">${fmtDT(state.lastDispensed)}</span></div>`;
+  }
+  setInterval(tick, 1000); tick(); refreshCards();
+  document.getElementById('menuToggle').addEventListener('click', () => document.getElementById('menuDropdown').classList.toggle('open'));
+  function closeMenu() { document.getElementById('menuDropdown').classList.remove('open'); }
+  function setTab(n) { document.getElementById('tabOyen').className='tab '+(n==='Oyen House'?'active':'inactive'); document.getElementById('tabAdd').className='tab '+(n!=='Oyen House'?'active':'inactive'); }
+  function openCamera() {
+    document.getElementById('cameraModal').classList.add('open');
+    document.getElementById('cameraConnecting').style.display='flex';
+    document.getElementById('cameraFeed').style.display='none';
+    setTimeout(()=>{ document.getElementById('cameraConnecting').style.display='none'; document.getElementById('cameraFeed').style.display='flex'; }, 2000);
+  }
+  function closeCamera(e) { if(!e||e.target===document.getElementById('cameraModal')) document.getElementById('cameraModal').classList.remove('open'); }
+  function openModal(id) { document.getElementById(id+'Modal').classList.add('open'); refreshCards(); }
+  function closeModal(e,id) { if(e.target===document.getElementById(id)) closeModalById(id); }
+  function closeModalById(id) { document.getElementById(id).classList.remove('open'); }
+  function toggleAutoClean() { state.autoClean=!state.autoClean; document.getElementById('autoCleanToggle').classList.toggle('on',state.autoClean); refreshCards(); }
+  function setCleanInterval(h) { state.cleanInterval=h; document.querySelectorAll('#intervalPills .pill').forEach(p=>p.className='pill'+(p.textContent.trim()===h+'h'?' active-orange':'')); refreshCards(); }
+  function markCleaned() { state.lastCleaned=new Date(); refreshCards(); }
+  function setSchedule(s) { state.foodSchedule=s; document.querySelectorAll('#schedulePills .pill').forEach(p=>p.className='pill'+(p.textContent.trim()===s?' active-orange':'')); refreshCards(); }
+  function setPortion(p) { state.portionSize=p; document.querySelectorAll('#portionPills .pill').forEach(b=>b.className='pill'+(b.textContent.trim()===p?' active-orange':'')); refreshCards(); }
+  function dispenseNow() { state.lastDispensed=new Date(); refreshCards(); }
+  function setVent(m) { state.ventilation=m; document.getElementById('airVent').textContent=m; document.querySelectorAll('#ventPills .pill').forEach(p=>p.className='pill'+(p.textContent.trim()===m?' active-blue':'')); }
+</script>
+</body>
+</html>
