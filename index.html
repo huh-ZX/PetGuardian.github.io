@@ -7,98 +7,125 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: 'Inter', sans-serif;
-      background: #0d0d1e;
+      background: #e8ecf5;
       min-height: 100vh;
       display: flex; align-items: center; justify-content: center;
-      color: #fff;
+      color: #1a1a2e;
     }
+
     .phone {
       width: 100%; max-width: 375px; min-height: 100vh;
-      background: #0d0d1e; display: flex; flex-direction: column;
+      background: #f0f2f9;
+      display: flex; flex-direction: column;
       position: relative; overflow-x: hidden;
     }
+
+    /* ── header ── */
     .header {
       display: flex; align-items: center; justify-content: space-between;
       padding: 16px 20px 12px;
+      background: #f0f2f9;
     }
     .btn-icon {
       background: none; border: none; cursor: pointer;
-      color: rgba(255,255,255,.8);
+      color: #4a4a6a;
       display: flex; align-items: center; justify-content: center;
       padding: 4px; border-radius: 8px; transition: color .2s;
     }
-    .btn-icon:hover { color: #fff; }
-    .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+    .btn-icon:hover { color: #1a1a2e; }
+    .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -.02em; color: #1a1a2e; }
     .avatar {
       width: 36px; height: 36px; border-radius: 50%;
-      background: rgba(251,146,60,.2); font-size: 18px;
+      background: rgba(217,119,6,.15); font-size: 18px;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; flex-shrink: 0;
     }
+
+    /* ── slide menu ── */
     .menu-dropdown {
       position: absolute; top: 64px; left: 0; right: 0; z-index: 40;
-      background: #181830; border-bottom: 1px solid rgba(255,255,255,.1);
-      box-shadow: 0 20px 40px rgba(0,0,0,.5); display: none;
+      background: #ffffff;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      display: none;
     }
     .menu-dropdown.open { display: block; }
     .menu-item {
       width: 100%; background: none; border: none; cursor: pointer;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 24px; color: rgba(255,255,255,.8);
+      padding: 14px 24px; color: #4a4a6a;
       font-size: 14px; font-weight: 500;
       transition: background .15s, color .15s; font-family: inherit;
+      border-bottom: 1px solid rgba(0,0,0,.04);
     }
-    .menu-item:hover { background: rgba(255,255,255,.05); color: #fff; }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item:hover { background: #f5f6fb; color: #1a1a2e; }
+
+    /* ── tabs ── */
     .tabs {
       display: flex; align-items: center; gap: 8px;
-      padding: 0 16px 12px; overflow-x: auto; scrollbar-width: none;
+      padding: 0 16px 12px;
+      overflow-x: auto; scrollbar-width: none;
     }
     .tabs::-webkit-scrollbar { display: none; }
     .tab {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 7px 16px; border-radius: 999px;
-      font-size: 14px; font-weight: 500; cursor: pointer;
+      font-size: 14px; font-weight: 600; cursor: pointer;
       border: none; transition: background .2s, color .2s;
       font-family: inherit; white-space: nowrap; flex-shrink: 0;
     }
-    .tab.active  { background: #fff; color: #0d0d1e; }
-    .tab.inactive { background: rgba(255,255,255,.1); color: rgba(255,255,255,.7); }
-    .tab.inactive:hover { background: rgba(255,255,255,.15); }
+    .tab.active  { background: #1a1a2e; color: #ffffff; }
+    .tab.inactive { background: #dde1ed; color: #6b7280; }
+    .tab.inactive:hover { background: #cdd3e3; color: #1a1a2e; }
+
+    /* ── content ── */
     .content {
       flex: 1; overflow-y: auto; padding: 0 16px 32px;
       display: flex; flex-direction: column; gap: 12px;
       scrollbar-width: none;
     }
     .content::-webkit-scrollbar { display: none; }
+
+    /* ── last updated ── */
     .updated-row { display: flex; justify-content: flex-end; }
     .live-badge {
       display: flex; align-items: center; gap: 6px;
-      background: rgba(34,197,94,.15); border: 1px solid rgba(34,197,94,.3);
+      background: rgba(22,163,74,.12); border: 1px solid rgba(22,163,74,.25);
       border-radius: 999px; padding: 4px 12px;
-      font-size: 11px; font-weight: 500; color: #86efac; white-space: nowrap;
+      font-size: 11px; font-weight: 600; color: #15803d; white-space: nowrap;
     }
     .live-dot {
       width: 6px; height: 6px; border-radius: 50%;
-      background: #4ade80; flex-shrink: 0; animation: pulse 1.5s infinite;
+      background: #16a34a; flex-shrink: 0; animation: pulse 1.5s infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-    .card { border-radius: 16px; padding: 16px; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    /* ── cards ── */
+    .card { border-radius: 18px; padding: 16px; }
+
+    /* camera card — white with shadow */
     .card-camera {
-      background: #2a2a3e; border: 1px solid rgba(255,255,255,.05);
+      background: #ffffff;
+      border: 1px solid rgba(0,0,0,.06);
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
       display: flex; align-items: center; gap: 16px;
-      cursor: pointer; transition: background .2s, transform .1s;
+      cursor: pointer; transition: box-shadow .2s, transform .1s;
     }
-    .card-camera:hover { background: #32324a; }
+    .card-camera:hover { box-shadow: 0 4px 20px rgba(0,0,0,.12); }
     .card-camera:active { transform: scale(.99); }
     .camera-icon-wrap {
       width: 48px; height: 48px; border-radius: 12px;
-      background: rgba(255,255,255,.1);
+      background: #f0f2f9;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .camera-label { font-weight: 600; font-size: 15px; }
-    .card-camera .chevron { margin-left: auto; opacity: .3; flex-shrink: 0; font-size: 18px; }
+    .camera-label { font-weight: 600; font-size: 15px; color: #1a1a2e; }
+    .card-camera .chevron { margin-left: auto; color: #9ca3af; flex-shrink: 0; font-size: 18px; }
+
+    /* sensor cards — vivid colours kept */
     .sensor-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .card-temp     { background: #2a5bbf; }
     .card-humidity { background: #3b5fa0; }
@@ -107,10 +134,10 @@
       font-size: 10px; font-weight: 700; letter-spacing: .07em;
       text-transform: uppercase; color: rgba(191,219,254,.9);
     }
-    .sensor-value { font-size: 28px; font-weight: 800; margin-bottom: 2px; }
-    .sensor-sub   { font-size: 11px; color: rgba(191,219,254,.8); }
+    .sensor-value { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .sensor-sub   { font-size: 11px; color: rgba(191,219,254,.85); }
     .hum-bar-track {
-      height: 7px; background: rgba(255,255,255,.2);
+      height: 7px; background: rgba(255,255,255,.25);
       border-radius: 999px; margin-bottom: 6px; overflow: hidden;
     }
     .hum-bar-fill {
@@ -118,14 +145,16 @@
       background: linear-gradient(to right, #93c5fd, #a78bfa);
       transition: width 1s ease;
     }
-    .hum-value { font-size: 22px; font-weight: 800; margin-bottom: 2px; }
+    .hum-value { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+
+    /* device cards — vivid colours kept */
     .card-litter { background: #d4712a; }
     .card-food   { background: #c96c28; }
     .card-device-header {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 8px;
     }
-    .card-device-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; }
+    .card-device-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #fff; }
     .btn-settings {
       background: none; border: none; cursor: pointer;
       color: rgba(255,255,255,.7); padding: 4px;
@@ -133,96 +162,115 @@
     }
     .btn-settings:hover { color: #fff; }
     .card-device-info { font-size: 11px; color: rgba(255,237,213,.9); line-height: 1.9; }
-    .auto-badge { font-size: 11px; color: #86efac; margin-top: 5px; display: block; }
+    .auto-badge { font-size: 11px; color: #bbf7d0; margin-top: 5px; display: block; }
+
     .card-air { background: #3a5e8a; }
     .card-air-header {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 12px;
     }
-    .card-air-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; }
+    .card-air-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #fff; }
     .air-row {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 8px;
     }
     .air-row:last-child { margin-bottom: 0; }
     .air-row-label { font-size: 13px; color: rgba(191,219,254,.9); }
+
     .badge {
       display: inline-flex; align-items: center;
       padding: 2px 10px; border-radius: 999px;
       font-size: 11px; font-weight: 700; border: 1px solid; white-space: nowrap;
     }
-    .badge-green  { background: rgba(34,197,94,.2);  color: #86efac; border-color: rgba(34,197,94,.3); }
-    .badge-orange { background: rgba(249,115,22,.2); color: #fdba74; border-color: rgba(249,115,22,.3); }
-    .badge-red    { background: rgba(239,68,68,.2);  color: #fca5a5; border-color: rgba(239,68,68,.3); }
-    .badge-blue   { background: rgba(96,165,250,.2); color: #bfdbfe; border-color: rgba(96,165,250,.3); }
+    .badge-green  { background: rgba(34,197,94,.2);  color: #86efac; border-color: rgba(34,197,94,.35); }
+    .badge-orange { background: rgba(249,115,22,.2); color: #fdba74; border-color: rgba(249,115,22,.35); }
+    .badge-red    { background: rgba(239,68,68,.2);  color: #fca5a5; border-color: rgba(239,68,68,.35); }
+    .badge-blue   { background: rgba(96,165,250,.2); color: #bfdbfe; border-color: rgba(96,165,250,.35); }
+
+    /* ── modal backdrop ── */
     .modal-backdrop {
       position: fixed; inset: 0; z-index: 50;
-      background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+      background: rgba(10,10,30,.45); backdrop-filter: blur(6px);
       display: none; align-items: flex-end; justify-content: center;
     }
     .modal-backdrop.open { display: flex; }
+
     .modal-sheet {
       width: 100%; max-width: 375px;
-      background: #1a1a2e; border-radius: 24px 24px 0 0;
+      background: #ffffff; border-radius: 24px 24px 0 0;
       padding: 24px 20px 40px;
-      border-top: 1px solid rgba(255,255,255,.1);
+      border-top: 1px solid rgba(0,0,0,.06);
+      box-shadow: 0 -4px 40px rgba(0,0,0,.12);
       animation: slideUp .25s ease;
       max-height: 85vh; overflow-y: auto;
     }
     @keyframes slideUp { from{transform:translateY(100%);opacity:0} to{transform:translateY(0);opacity:1} }
+
     .modal-header {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 20px;
     }
-    .modal-title { font-size: 17px; font-weight: 700; }
+    .modal-title { font-size: 17px; font-weight: 700; color: #1a1a2e; }
     .btn-close {
-      background: none; border: none; cursor: pointer;
-      color: rgba(255,255,255,.5); font-size: 20px; line-height: 1;
-      padding: 4px 8px; transition: color .2s;
+      background: #f0f2f9; border: none; cursor: pointer;
+      color: #6b7280; font-size: 16px; line-height: 1;
+      padding: 6px 10px; border-radius: 8px; transition: background .15s, color .15s;
     }
-    .btn-close:hover { color: #fff; }
+    .btn-close:hover { background: #e2e5f0; color: #1a1a2e; }
+
     .modal-section { margin-bottom: 16px; }
-    .modal-section-label { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+    .modal-section-label { font-size: 13px; font-weight: 600; color: #4a4a6a; margin-bottom: 8px; }
+
+    /* pill grids */
     .pill-row { display: grid; gap: 8px; }
     .pill-row-4 { grid-template-columns: repeat(4, 1fr); }
     .pill-row-3 { grid-template-columns: repeat(3, 1fr); }
     .pill-row-2 { grid-template-columns: repeat(2, 1fr); }
+
     .pill {
       padding: 10px 6px; border-radius: 12px;
       font-size: 12px; font-weight: 600; cursor: pointer;
-      background: rgba(255,255,255,.1); color: rgba(255,255,255,.6);
-      border: none; transition: background .15s, color .15s;
+      background: #f0f2f9; color: #6b7280;
+      border: 1.5px solid #e2e5f0;
+      transition: background .15s, color .15s, border-color .15s;
       font-family: inherit; text-align: center; white-space: nowrap; width: 100%;
     }
-    .pill:hover { background: rgba(255,255,255,.18); color: #fff; }
-    .pill.sel-orange { background: #f97316; color: #fff; }
-    .pill.sel-blue   { background: #3b82f6; color: #fff; }
+    .pill:hover { background: #e2e5f0; color: #1a1a2e; border-color: #cdd3e3; }
+    .pill.sel-orange { background: #f97316; color: #fff; border-color: #f97316; }
+    .pill.sel-blue   { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+
     .btn-action {
       width: 100%; padding: 14px; border-radius: 16px;
       font-size: 14px; font-weight: 700; border: none; cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 8px;
       transition: filter .2s; font-family: inherit; margin-bottom: 12px;
     }
-    .btn-action:hover { filter: brightness(1.1); }
+    .btn-action:hover { filter: brightness(1.06); }
     .btn-orange { background: #f97316; color: #fff; }
     .btn-blue   { background: #3b82f6; color: #fff; }
-    .info-box { background: rgba(255,255,255,.05); border-radius: 16px; padding: 12px; }
+
+    .info-box {
+      background: #f5f6fb; border: 1px solid #e2e5f0;
+      border-radius: 16px; padding: 12px;
+    }
     .info-row {
       display: flex; justify-content: space-between; align-items: flex-start;
       font-size: 11px; gap: 8px; margin-bottom: 6px;
     }
     .info-row:last-child { margin-bottom: 0; }
-    .info-key { color: rgba(255,255,255,.5); white-space: nowrap; flex-shrink: 0; }
-    .info-val { color: rgba(255,255,255,.8); text-align: right; }
+    .info-key { color: #9ca3af; white-space: nowrap; flex-shrink: 0; }
+    .info-val { color: #374151; text-align: right; }
+
+    /* toggle */
     .toggle-row {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 16px; gap: 12px;
     }
-    .toggle-name { font-size: 13px; font-weight: 600; }
-    .toggle-desc { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; }
+    .toggle-name { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+    .toggle-desc { font-size: 11px; color: #9ca3af; margin-top: 2px; }
     .toggle {
       width: 44px; height: 24px; border-radius: 999px;
-      background: rgba(255,255,255,.2);
+      background: #d1d5db;
       position: relative; cursor: pointer; border: none;
       transition: background .2s; flex-shrink: 0;
     }
@@ -230,39 +278,45 @@
     .toggle-thumb {
       position: absolute; top: 2px; left: 2px;
       width: 20px; height: 20px; border-radius: 50%;
-      background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3);
+      background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.2);
       transition: transform .2s;
     }
     .toggle.on .toggle-thumb { transform: translateX(20px); }
+
     .alert-box {
       display: flex; gap: 8px; align-items: flex-start;
-      background: rgba(59,130,246,.1); border: 1px solid rgba(59,130,246,.2);
+      background: rgba(59,130,246,.07); border: 1px solid rgba(59,130,246,.2);
       border-radius: 16px; padding: 12px;
     }
-    .alert-text { font-size: 11px; color: #bfdbfe; line-height: 1.6; }
+    .alert-text { font-size: 11px; color: #3b82f6; line-height: 1.6; }
+
+    /* add device form */
     .field-group { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
-    .field-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.6); margin-bottom: 6px; display: block; }
+    .field-label { font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 6px; display: block; }
     .field-input {
       width: 100%; padding: 13px 14px; border-radius: 14px;
-      background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.1);
-      color: #fff; font-size: 14px; font-family: inherit;
+      background: #f5f6fb; border: 1.5px solid #e2e5f0;
+      color: #1a1a2e; font-size: 14px; font-family: inherit;
       outline: none; transition: border-color .2s;
     }
-    .field-input::placeholder { color: rgba(255,255,255,.3); }
-    .field-input:focus { border-color: rgba(99,102,241,.6); }
+    .field-input::placeholder { color: #c4c9d8; }
+    .field-input:focus { border-color: #3b82f6; background: #fff; }
+
     .error-box {
       display: none;
-      background: rgba(239,68,68,.12); border: 1.5px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.07); border: 1.5px solid rgba(239,68,68,.25);
       border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;
     }
     .error-box.show { display: flex; gap: 10px; align-items: flex-start; }
     .error-icon { font-size: 18px; flex-shrink: 0; line-height: 1.2; }
-    .error-title { font-size: 13px; font-weight: 700; color: #fca5a5; margin-bottom: 3px; }
-    .error-body  { font-size: 11px; color: rgba(252,165,165,.75); line-height: 1.6; }
-    .error-code  { font-size: 10px; color: rgba(252,165,165,.45); margin-top: 4px; font-family: monospace; }
+    .error-title { font-size: 13px; font-weight: 700; color: #dc2626; margin-bottom: 3px; }
+    .error-body  { font-size: 11px; color: #ef4444; line-height: 1.6; }
+    .error-code  { font-size: 10px; color: #fca5a5; margin-top: 4px; font-family: monospace; }
+
+    /* ── camera modal ── */
     .modal-camera {
       position: fixed; inset: 0; z-index: 50;
-      background: rgba(0,0,0,.92); backdrop-filter: blur(4px);
+      background: rgba(10,10,30,.88); backdrop-filter: blur(6px);
       display: none; align-items: center; justify-content: center;
     }
     .modal-camera.open { display: flex; }
@@ -302,7 +356,7 @@
       position: absolute; top: 10px; left: 10px;
       background: rgba(0,0,0,.6); border-radius: 999px;
       padding: 3px 8px; display: flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 700;
+      font-size: 11px; font-weight: 700; color: #fff;
     }
     .live-dot-red { width: 7px; height: 7px; border-radius: 50%; background: #ef4444; animation: pulse 1.2s infinite; }
     .cam-id { position: absolute; bottom: 8px; right: 10px; font-size: 10px; color: rgba(255,255,255,.3); }
@@ -311,15 +365,12 @@
       padding: 14px 16px 0;
     }
     .camera-btn {
-      background: rgba(255,255,255,.1); border: none; cursor: pointer;
+      background: rgba(255,255,255,.12); border: none; cursor: pointer;
       padding: 10px 4px; border-radius: 12px;
-      font-size: 11px; font-weight: 500; color: rgba(255,255,255,.8);
+      font-size: 11px; font-weight: 500; color: rgba(255,255,255,.85);
       transition: background .15s; font-family: inherit; white-space: nowrap;
     }
-    .camera-btn:hover { background: rgba(255,255,255,.18); color: #fff; }
-
-    /* shared settings gear path */
-    .gear-path { /* used inline */ }
+    .camera-btn:hover { background: rgba(255,255,255,.2); }
   </style>
 </head>
 <body>
@@ -329,7 +380,9 @@
   <div class="header">
     <button class="btn-icon" id="menuToggle">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
       </svg>
     </button>
     <h1>PetGuardian</h1>
@@ -338,11 +391,11 @@
 
   <!-- slide menu -->
   <div class="menu-dropdown" id="menuDropdown">
-    <button class="menu-item" onclick="closeMenu()">Dashboard <span>›</span></button>
-    <button class="menu-item" onclick="closeMenu()">My Pets <span>›</span></button>
-    <button class="menu-item" onclick="closeMenu()">Notifications <span>›</span></button>
-    <button class="menu-item" onclick="closeMenu()">Settings <span>›</span></button>
-    <button class="menu-item" onclick="closeMenu()">Help <span>›</span></button>
+    <button class="menu-item" onclick="closeMenu()">Dashboard <span style="color:#d1d5db">›</span></button>
+    <button class="menu-item" onclick="closeMenu()">My Pets <span style="color:#d1d5db">›</span></button>
+    <button class="menu-item" onclick="closeMenu()">Notifications <span style="color:#d1d5db">›</span></button>
+    <button class="menu-item" onclick="closeMenu()">Settings <span style="color:#d1d5db">›</span></button>
+    <button class="menu-item" onclick="closeMenu()">Help <span style="color:#d1d5db">›</span></button>
   </div>
 
   <!-- tabs -->
@@ -367,10 +420,10 @@
       </div>
     </div>
 
-    <!-- camera card — FIXED: viewBox added so triangle is not clipped -->
+    <!-- camera card -->
     <div class="card card-camera" onclick="openCamera()" tabindex="0">
       <div class="camera-icon-wrap">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M23 7l-7 5 7 5V7z"/>
           <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
         </svg>
@@ -381,8 +434,6 @@
 
     <!-- temp + humidity -->
     <div class="sensor-row">
-
-      <!-- temperature — FIXED: viewBox added so bulb is not clipped -->
       <div class="card card-temp">
         <div class="sensor-header">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(191,219,254,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -393,8 +444,6 @@
         <div class="sensor-value" id="tempVal">24.0°C</div>
         <div class="sensor-sub"  id="tempLabel">Perfect for Oyen</div>
       </div>
-
-      <!-- humidity — FIXED: viewBox added so droplet base is not clipped -->
       <div class="card card-humidity">
         <div class="sensor-header">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(191,219,254,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -408,7 +457,6 @@
         <div class="hum-value" id="humVal">55%</div>
         <div class="sensor-sub"  id="humLabel">Comfortable</div>
       </div>
-
     </div>
 
     <!-- litter box -->
@@ -503,7 +551,7 @@
   <div class="camera-panel">
     <div class="camera-topbar">
       <span>Live Camera · Oyen House</span>
-      <button class="btn-close" onclick="closeCamera()">✕</button>
+      <button class="btn-close" onclick="closeCamera()" style="background:rgba(255,255,255,.15);color:#fff">✕</button>
     </div>
     <div class="camera-viewport">
       <div class="camera-connecting" id="camConnecting">
@@ -602,7 +650,7 @@
       <div class="info-row"><span class="info-key">CO Level</span><span class="badge badge-green">Normal</span></div>
     </div>
     <div class="alert-box">
-      <span style="color:#93c5fd;flex-shrink:0;font-size:14px;margin-top:1px">ℹ</span>
+      <span style="color:#3b82f6;flex-shrink:0;font-size:14px;margin-top:1px">ℹ</span>
       <span class="alert-text">Air quality sensors update every 5 minutes. Ensure room ventilation is adequate for your pet.</span>
     </div>
   </div>
